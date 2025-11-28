@@ -4,6 +4,7 @@ import pandas as pd
 
 class FlashCardManager:
     FILE = "./data/french_words.csv"
+    PROGRESS_FILE = "./data/words_to_learn.csv"
 
     def __init__(
         self,
@@ -23,7 +24,17 @@ class FlashCardManager:
         self.card_title = card_title
         self.card_word = card_word
 
-        df = pd.read_csv(FlashCardManager.FILE)
+        # df = pd.read_csv(FlashCardManager.FILE)
+        # self.words_to_learn = df.to_dict(orient="records")
+
+        try:
+            df = pd.read_csv(FlashCardManager.PROGRESS_FILE)
+            print("Loaded words to learn from progress file.")
+
+        except FileNotFoundError:
+            df = pd.read_csv(FlashCardManager.FILE)
+            print("Loaded full original word list.")
+
         self.words_to_learn = df.to_dict(orient="records")
 
         self.current_word = {}
@@ -64,6 +75,6 @@ class FlashCardManager:
 
     def save_progress(self):
         left_over_data = pd.DataFrame(self.words_to_learn)
-        left_over_data.to_csv("./data/words_to_learn.csv", index=False)
+        left_over_data.to_csv(FlashCardManager.PROGRESS_FILE, index=False)
 
         self.window.destroy()
